@@ -1,7 +1,5 @@
 // 1. VARIABEL GLOBAL
 let dataKatalogGlobal = [];
-
-// PENTING: Ganti URL di bawah ini dengan URL CSV dari Google Sheets milikmu yang BARU!
 const urlCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSr_Sh6mxIZFs_BdXP7zXCuEiU_FiuVcjrchMm5X8cPq8HXn2DZ2X2OQA_ObHxdVLer3dWwGdi5WVmq/pub?gid=989510176&single=true&output=csv";
 
 // 2. DETEKSI PARAMETER URL
@@ -28,7 +26,7 @@ function formatGambarDrive(urlDrive) {
     return urlDrive;
 }
 
-// 5. PENARIKAN DATA & FILTERING YANG SUDAH DIPERBAIKI
+// 5. PENARIKAN DATA & FILTERING
 Papa.parse(urlCSV, {
     download: true,
     header: true,
@@ -41,11 +39,7 @@ Papa.parse(urlCSV, {
                     const kategoriMentah = produk["Kategori Produk"];
                     if (!kategoriMentah) return false;
 
-                    // LOGIKA BARU: Memecah teks "Makanan, Minuman" menjadi daftar terpisah
-                    // Lalu membersihkan spasi ekstra di kanan/kiri kata
                     const daftarKategori = kategoriMentah.split(',').map(item => item.trim());
-
-                    // Mengecek apakah kategori di URL ada di dalam daftar yang sudah rapi
                     return daftarKategori.includes(kategoriAktif.trim());
                 });
             } else {
@@ -122,7 +116,9 @@ function bukaPopup(index) {
     document.getElementById('modal-nama').innerText = produk["Nama Toko"];
     document.getElementById('modal-kategori').innerText = produk["Kategori Produk"] || '';
     document.getElementById('modal-deskripsi').innerText = produk["Deskripsi Singkat Toko"];
-    document.getElementById('modal-list-barang').innerText = produk["List Barang yang terjual"] || "Tidak ada daftar barang detail.";
+    
+    // PERBAIKAN: Huruf 'T' pada Terjual sudah dibesarkan sesuai Form
+    document.getElementById('modal-list-barang').innerText = produk["List Barang yang Terjual"] || "Tidak ada daftar barang detail.";
     
     let hargaMentah = produk["Harga Terendah Produk (Rp)"];
     document.getElementById('modal-harga').innerText = "Rp " + (hargaMentah ? parseFloat(hargaMentah).toLocaleString('id-ID') : "0");
