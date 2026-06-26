@@ -16,7 +16,7 @@
         <p class="text-lg font-light">Katalog Produk Unggulan & Hasil Olahan Warga Desa</p>
     </header>
 
-    <main class="container mx-auto px-4 py-8 max-w-6xl">
+    <main class="container mx-auto px-4 py-8 max-w-6xl relative">
         
         <div id="status-loading" class="text-center py-10 text-gray-500 text-lg animate-pulse">
             Memuat data lapak desa...
@@ -31,11 +31,58 @@
         <p>&copy; 2026 Inovasi KKN Desa Lainungan, Sidrap.</p>
     </footer>
 
+    <div id="modal-detail" onclick="tutupPopup()" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        
+        <div onclick="event.stopPropagation()" class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-300 overflow-hidden">
+            
+            <div class="flex justify-between items-center p-4 border-b bg-gray-50">
+                <h3 class="text-lg font-bold text-gray-800">Detail Produk</h3>
+                <button onclick="tutupPopup()" class="text-gray-500 hover:text-red-500 bg-gray-200 hover:bg-red-100 rounded-full p-2 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto p-5 flex-grow">
+                
+                <div class="w-full bg-gray-100 rounded-lg flex items-center justify-center mb-6 p-2 h-64 md:h-80 border">
+                    <img id="modal-foto" src="" alt="Foto Produk" class="max-w-full max-h-full object-contain rounded">
+                </div>
+                
+                <div>
+                    <span id="modal-pemilik" class="text-xs font-bold text-green-600 uppercase tracking-wider bg-green-100 px-2 py-1 rounded">Lapak</span>
+                    <h2 id="modal-nama" class="text-2xl font-bold text-gray-900 mt-2 mb-1">Nama Produk</h2>
+                    <p id="modal-kategori" class="text-sm text-gray-500 mb-4">Kategori</p>
+                    
+                    <div class="mb-5">
+                        <span id="modal-harga" class="text-3xl font-bold text-green-700">Rp 0</span>
+                    </div>
+
+                    <div class="border-t pt-4">
+                        <h4 class="font-bold text-gray-800 mb-2">Deskripsi Lengkap:</h4>
+                        <p id="modal-deskripsi" class="text-gray-700 leading-relaxed whitespace-pre-wrap">Deskripsi</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t bg-gray-50 flex justify-end space-x-3">
+                <button onclick="tutupPopup()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded transition-colors">
+                    Kembali
+                </button>
+                <button id="btn-modal-wa" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded transition-colors flex items-center">
+                    Beli via WhatsApp
+                </button>
+            </div>
+
+        </div>
+    </div>
+
     <script>
-        // 1. LINK CSV GOOGLE SHEETS
+        // 1. VARIABEL GLOBAL UNTUK MENYIMPAN DATA
+        let dataKatalogGlobal = [];
+        
         const urlCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSr_Sh6mxIZFs_BdXP7zXCuEiU_FiuVcjrchMm5X8cPq8HXn2DZ2X2OQA_ObHxdVLer3dWwGdi5WVmq/pub?gid=989510176&single=true&output=csv";
 
-        // 2. FUNGSI MENGUBAH LINK DRIVE MENJADI GAMBAR THUMBNAIL
+        // 2. FUNGSI MENGUBAH LINK DRIVE
         function formatGambarDrive(urlDrive) {
             if (!urlDrive) return "https://via.placeholder.com/400x300?text=Tidak+Ada+Foto";
             const match = urlDrive.match(/([-\w]{25,})/);
@@ -46,16 +93,17 @@
             return urlDrive;
         }
 
-        // 3. PROSES PENARIKAN DATA (DENGAN PENANGANAN ERROR)
+        // 3. PROSES PENARIKAN DATA
         Papa.parse(urlCSV, {
             download: true,
             header: true,
             complete: function(results) {
                 try {
-                    const dataLapak = results.data;
+                    // Menyimpan data ke variabel global agar bisa diakses oleh fungsi Popup
+                    dataKatalogGlobal = results.data;
                     
-                    if (!dataLapak || dataLapak.length === 0) {
-                        document.getElementById("status-loading").innerText = "Data kosong atau tautan salah.";
+                    if (!dataKatalogGlobal || dataKatalogGlobal.length === 0) {
+                        document.getElementById("status-loading").innerText = "Data kosong.";
                         document.getElementById("status-loading").classList.remove("animate-pulse");
                         return;
                     }
@@ -63,85 +111,120 @@
                     document.getElementById("status-loading").classList.add("hidden");
                     document.getElementById("wadah-katalog").classList.remove("hidden");
                     
-                    renderKatalog(dataLapak);
+                    renderKatalog(dataKatalogGlobal);
                 } catch (error) {
-                    console.error("Error pada saat merender data:", error);
-                    document.getElementById("status-loading").innerText = "Terjadi kesalahan pada kodingan: " + error.message;
+                    document.getElementById("status-loading").innerText = "Error: " + error.message;
                     document.getElementById("status-loading").classList.remove("animate-pulse");
                 }
-            },
-            error: function(err) {
-                console.error("Gagal menarik data CSV:", err);
-                document.getElementById("status-loading").innerText = "Gagal terhubung ke Google Sheets. Pastikan internet lancar.";
-                document.getElementById("status-loading").classList.remove("animate-pulse");
             }
         });
 
-        // 4. FUNGSI UNTUK MERAKIT KARTU PRODUK
+        // 4. FUNGSI MERAKIT KARTU (KEMBALI KE GAYA AWAL)
         function renderKatalog(data) {
             const wadah = document.getElementById("wadah-katalog");
             let elemenHTML = "";
 
             data.forEach((produk, index) => {
-                if(!produk["Nama Produk"]) return; // Lewati jika baris kosong
+                if(!produk["Nama Produk"]) return; 
 
                 const nama = produk["Nama Produk"];
                 const pemilik = produk["Nama Pemilik"];
                 const kategori = produk["Kategori Produk"];
                 
-                // Mencegah error jika kolom harga kosong
                 let hargaMentah = produk["Harga (Rp)"];
                 let harga = hargaMentah ? parseFloat(hargaMentah).toLocaleString('id-ID') : "0";
                 
                 const deskripsi = produk["Deskripsi Produk"];
-                const nomorWA = produk["Nomor Whatsapp (62)"];
                 const fotoAsli = produk["Foto Produk"];
-
                 const fotoSiapRender = formatGambarDrive(fotoAsli);
-                
-                // Mengamankan teks dari tanda kutip agar tombol Beli tidak error
-                const namaAman = nama.replace(/'/g, "\\'"); 
 
                 elemenHTML += `
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300 border border-gray-100">
                         
-                        <div class="w-full h-48 bg-gray-50 flex items-center justify-center p-2">
-                            <img src="${fotoSiapRender}" alt="${nama}" class="max-w-full max-h-full object-contain rounded">
-                        </div>
+                        <img src="${fotoSiapRender}" alt="${nama}" class="w-full h-48 object-cover">
                         
                         <div class="p-5 flex-grow flex flex-col">
                             <span class="text-xs font-semibold text-green-600 uppercase tracking-wider mb-1">${pemilik}</span>
                             <h3 class="text-xl font-bold text-gray-900 mb-2">${nama}</h3>
                             <p class="text-sm text-gray-500 mb-3">${kategori || ''}</p>
-                            <p class="text-gray-600 text-sm mb-4 flex-grow">${deskripsi}</p>
+                            
+                            <p class="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">${deskripsi}</p>
                             
                             <div class="mb-4">
                                 <span class="text-lg font-bold text-gray-900">Rp ${harga}</span>
                             </div>
                             
-                            <button onclick="prosesBeli('${nomorWA}', '${namaAman}')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200">
-                                Beli via WhatsApp
+                            <button onclick="bukaPopup(${index})" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200">
+                                Lihat Detail
                             </button>
                         </div>
                     </div>
                 `;
             });
 
-            // Jika tidak ada data yang tercetak sama sekali
             if(elemenHTML === "") {
                 document.getElementById("status-loading").classList.remove("hidden");
-                document.getElementById("status-loading").innerText = "Kolom Nama Produk tidak ditemukan di Google Sheets. Pastikan namanya sama persis.";
-                document.getElementById("wadah-katalog").classList.add("hidden");
+                document.getElementById("status-loading").innerText = "Kolom Nama Produk tidak ditemukan.";
             } else {
                 wadah.innerHTML = elemenHTML;
             }
         }
 
-        // 5. FUNGSI TRANSAKSI WHATSAPP
-        function prosesBeli(nomorWA, namaProduk) {
-            // Mencegah error jika warga memasukkan nomor WA pakai spasi/strip
-            const nomorBersih = nomorWA.replace(/[^0-9]/g, ''); 
+        // 5. FUNGSI UNTUK MEMUNCULKAN POPUP
+        function bukaPopup(index) {
+            // Ambil data produk spesifik yang diklik
+            const produk = dataKatalogGlobal[index];
+            if (!produk) return;
+
+            // Masukkan data ke dalam elemen Modal
+            document.getElementById('modal-nama').innerText = produk["Nama Produk"];
+            document.getElementById('modal-pemilik').innerText = produk["Nama Pemilik"];
+            document.getElementById('modal-kategori').innerText = produk["Kategori Produk"] || '';
+            document.getElementById('modal-deskripsi').innerText = produk["Deskripsi Produk"];
             
+            let hargaMentah = produk["Harga (Rp)"];
+            document.getElementById('modal-harga').innerText = "Rp " + (hargaMentah ? parseFloat(hargaMentah).toLocaleString('id-ID') : "0");
+            
+            const fotoAsli = produk["Foto Produk"];
+            document.getElementById('modal-foto').src = formatGambarDrive(fotoAsli);
+
+            // Mengatur ulang tautan tombol WhatsApp di dalam Modal
+            const namaAman = produk["Nama Produk"].replace(/'/g, "\\'"); 
+            const nomorWA = produk["Nomor Whatsapp (62)"];
+            document.getElementById('btn-modal-wa').setAttribute('onclick', `prosesBeli('${nomorWA}', '${namaAman}')`);
+
+            // Menampilkan Modal dengan animasi Fade-in
+            const modal = document.getElementById('modal-detail');
+            modal.classList.remove('hidden');
+            
+            // Jeda milidetik agar animasi transisi Tailwind berjalan
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.children[0].classList.remove('scale-95');
+                modal.children[0].classList.add('scale-100');
+            }, 10);
+        }
+
+        // 6. FUNGSI UNTUK MENUTUP POPUP
+        function tutupPopup() {
+            const modal = document.getElementById('modal-detail');
+            
+            // Menjalankan animasi Fade-out
+            modal.classList.add('opacity-0');
+            modal.children[0].classList.remove('scale-100');
+            modal.children[0].classList.add('scale-95');
+            
+            // Menyembunyikan elemen setelah animasi selesai (300ms)
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                // Mengosongkan foto agar tidak membekas saat buka produk lain
+                document.getElementById('modal-foto').src = ""; 
+            }, 300); 
+        }
+
+        // 7. FUNGSI TRANSAKSI WHATSAPP (Kini dipanggil dari dalam Modal)
+        function prosesBeli(nomorWA, namaProduk) {
+            const nomorBersih = nomorWA.replace(/[^0-9]/g, ''); 
             const pesan = `Halo, saya melihat informasi dari website Lapak Desa Lainungan. Saya ingin memesan *${namaProduk}*. Apakah produk ini masih tersedia?`;
             const urlWA = `https://wa.me/${nomorBersih}?text=${encodeURIComponent(pesan)}`;
             
