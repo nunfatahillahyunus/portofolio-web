@@ -22,13 +22,12 @@
     <!-- Bagian Utama Konten -->
     <main class="container mx-auto px-4 py-8 max-w-6xl">
         
-        <!-- Indikator Loading (Tampil saat data sedang ditarik dari Google Sheets) -->
+        <!-- Indikator Loading & Pesan Error -->
         <div id="status-loading" class="text-center py-10 text-gray-500 text-lg animate-pulse">
             Memuat data lapak desa...
         </div>
         
         <!-- Wadah Grid untuk Katalog Produk -->
-        <!-- Grid ini akan menyusun kartu produk: 1 kolom di HP, 3 kolom di Laptop -->
         <div id="wadah-katalog" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
             <!-- Kartu produk akan di-generate oleh JavaScript di sini -->
         </div>
@@ -42,67 +41,76 @@
 
     <!-- Logika JavaScript -->
     <script>
-        // 1. MASUKKAN LINK CSV GOOGLE SHEETS DI SINI
-        // Ganti URL di bawah dengan URL Publish to web (format .csv) milikmu nanti
+        // 1. LINK CSV GOOGLE SHEETS
         const urlCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSr_Sh6mxIZFs_BdXP7zXCuEiU_FiuVcjrchMm5X8cPq8HXn2DZ2X2OQA_ObHxdVLer3dWwGdi5WVmq/pub?gid=989510176&single=true&output=csv";
 
-        // Fungsi untuk mengekstrak ID Gambar dari tautan Google Drive
+        // 2. FUNGSI MENGUBAH LINK DRIVE MENJADI GAMBAR THUMBNAIL
         function formatGambarDrive(urlDrive) {
             if (!urlDrive) return "https://via.placeholder.com/400x300?text=Tidak+Ada+Foto";
-            
-            // Mencari ID unik dari link Google Drive menggunakan Regex
             const match = urlDrive.match(/([-\w]{25,})/);
             if (match && match[1]) {
                 const idGambar = match[1];
-                // Menggunakan format thumbnail Google Drive (w800 = lebar maksimal 800px)
                 return `https://drive.google.com/thumbnail?id=${idGambar}&sz=w800`;
             }
             return urlDrive;
         }
 
-        // 2. PROSES PENARIKAN DATA
-        if (urlCSV !== "MASUKKAN_URL_CSV_GOOGLE_SHEETS_DISINI") {
-            Papa.parse(urlCSV, {
-                download: true,
-                header: true,
-                complete: function(results) {
+        // 3. PROSES PENARIKAN DATA (DENGAN PENANGANAN ERROR)
+        Papa.parse(urlCSV, {
+            download: true,
+            header: true,
+            complete: function(results) {
+                try {
                     const dataLapak = results.data;
                     
-                    // Sembunyikan tulisan loading, tampilkan wadah katalog
+                    if (!dataLapak || dataLapak.length === 0) {
+                        document.getElementById("status-loading").innerText = "Data kosong atau tautan salah.";
+                        document.getElementById("status-loading").classList.remove("animate-pulse");
+                        return;
+                    }
+                    
                     document.getElementById("status-loading").classList.add("hidden");
                     document.getElementById("wadah-katalog").classList.remove("hidden");
                     
                     renderKatalog(dataLapak);
-                },
-                error: function(err) {
-                    document.getElementById("status-loading").innerText = "Gagal memuat data. Periksa koneksi atau tautan CSV.";
+                } catch (error) {
+                    console.error("Error pada saat merender data:", error);
+                    document.getElementById("status-loading").innerText = "Terjadi kesalahan pada kodingan: " + error.message;
+                    document.getElementById("status-loading").classList.remove("animate-pulse");
                 }
-            });
-        } else {
-            document.getElementById("status-loading").innerText = "Silakan masukkan URL CSV Google Sheets ke dalam file HTML terlebih dahulu.";
-        }
+            },
+            error: function(err) {
+                console.error("Gagal menarik data CSV:", err);
+                document.getElementById("status-loading").innerText = "Gagal terhubung ke Google Sheets. Pastikan internet lancar.";
+                document.getElementById("status-loading").classList.remove("animate-pulse");
+            }
+        });
 
-        // 3. FUNGSI UNTUK MERAKIT KARTU PRODUK
+        // 4. FUNGSI UNTUK MERAKIT KARTU PRODUK (DENGAN GRADASI)
         function renderKatalog(data) {
             const wadah = document.getElementById("wadah-katalog");
-            let elemenHTML += "";
+            let elemenHTML = "";
 
             data.forEach((produk, index) => {
-                // Lewati baris jika Nama Produk kosong (mencegah error baris kosong di akhir sheet)
-                if(!produk["Nama Produk"]) return;
+                if(!produk["Nama Produk"]) return; // Lewati jika baris kosong
 
-                // Ambil data dari kolom yang sesuai (Pastikan nama ini SAMA PERSIS dengan judul kolom di Google Sheets)
                 const nama = produk["Nama Produk"];
                 const pemilik = produk["Nama Pemilik"];
                 const kategori = produk["Kategori Produk"];
-                const harga = parseFloat(produk["Harga (Rp)"]).toLocaleString('id-ID'); // Format angka ke Rupiah
+                
+                // Mencegah error jika kolom harga kosong
+                let hargaMentah = produk["Harga (Rp)"];
+                let harga = hargaMentah ? parseFloat(hargaMentah).toLocaleString('id-ID') : "0";
+                
                 const deskripsi = produk["Deskripsi Produk"];
                 const nomorWA = produk["Nomor Whatsapp (62)"];
                 const fotoAsli = produk["Foto Produk"];
 
                 const fotoSiapRender = formatGambarDrive(fotoAsli);
+                
+                // Mengamankan teks dari tanda kutip agar tombol Beli tidak error
+                const namaAman = nama.replace(/'/g, "\\'"); 
 
-                // Desain Kartu HTML menggunakan Tailwind CSS
                 elemenHTML += `
                     <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300">
                         
@@ -113,8 +121,8 @@
                             <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
                         </div>
                         
-                        <!-- Bagian Teks (padding atas sedikit dikurangi agar lebih menyatu dengan gradasi) -->
-                        <div class="px-5 pb-5 pt-2 flex-grow flex flex-col">
+                        <!-- BAGIAN TEKS -->
+                        <div class="px-5 pb-5 pt-2 flex-grow flex flex-col relative z-10">
                             <span class="text-xs font-semibold text-green-600 uppercase tracking-wider mb-1">${pemilik}</span>
                             <h3 class="text-xl font-bold text-gray-900 mb-2">${nama}</h3>
                             <p class="text-sm text-gray-500 mb-3">${kategori || ''}</p>
@@ -124,23 +132,31 @@
                                 <span class="text-lg font-bold text-gray-900">Rp ${harga}</span>
                             </div>
                             
-                            <button onclick="prosesBeli('${nomorWA}', '${nama}', ${index})" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200">
+                            <button onclick="prosesBeli('${nomorWA}', '${namaAman}')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200">
                                 Beli via WhatsApp
                             </button>
                         </div>
                     </div>
                 `;
+            });
 
-            wadah.innerHTML = elemenHTML;
+            // Jika tidak ada data yang tercetak sama sekali
+            if(elemenHTML === "") {
+                document.getElementById("status-loading").classList.remove("hidden");
+                document.getElementById("status-loading").innerText = "Kolom Nama Produk tidak ditemukan di Google Sheets. Pastikan namanya sama persis.";
+                document.getElementById("wadah-katalog").classList.add("hidden");
+            } else {
+                wadah.innerHTML = elemenHTML;
+            }
         }
 
-        // 4. FUNGSI TRANSAKSI WHATSAPP
+        // 5. FUNGSI TRANSAKSI WHATSAPP
         function prosesBeli(nomorWA, namaProduk) {
-            // Pesan yang akan otomatis terketik di WA penjual
-            const pesan = `Halo, saya melihat informasi dari website Lapak Desa Lainungan. Saya ingin memesan *${namaProduk}*. Apakah produk ini masih tersedia?`;
+            // Mencegah error jika warga memasukkan nomor WA pakai spasi/strip
+            const nomorBersih = nomorWA.replace(/[^0-9]/g, ''); 
             
-            // Format URL WA (Otomatis mendeteksi pembukaan di HP atau Web)
-            const urlWA = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;
+            const pesan = `Halo, saya melihat informasi dari website Lapak Desa Lainungan. Saya ingin memesan *${namaProduk}*. Apakah produk ini masih tersedia?`;
+            const urlWA = `https://wa.me/${nomorBersih}?text=${encodeURIComponent(pesan)}`;
             
             window.open(urlWA, "_blank");
         }
