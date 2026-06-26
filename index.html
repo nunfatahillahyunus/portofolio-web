@@ -47,7 +47,6 @@
         const urlCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSr_Sh6mxIZFs_BdXP7zXCuEiU_FiuVcjrchMm5X8cPq8HXn2DZ2X2OQA_ObHxdVLer3dWwGdi5WVmq/pub?gid=989510176&single=true&output=csv";
 
         // Fungsi untuk mengekstrak ID Gambar dari tautan Google Drive
-        // Ini mengubah link Google Form menjadi link gambar langsung
         function formatGambarDrive(urlDrive) {
             if (!urlDrive) return "https://via.placeholder.com/400x300?text=Tidak+Ada+Foto";
             
@@ -55,7 +54,8 @@
             const match = urlDrive.match(/([-\w]{25,})/);
             if (match && match[1]) {
                 const idGambar = match[1];
-                return `https://drive.google.com/uc?export=view&id=${idGambar}`;
+                // Menggunakan format thumbnail Google Drive (w800 = lebar maksimal 800px)
+                return `https://drive.google.com/thumbnail?id=${idGambar}&sz=w800`;
             }
             return urlDrive;
         }
