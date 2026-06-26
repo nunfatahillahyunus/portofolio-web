@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Produk - Lapak Desa Lainungan</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 flex flex-col min-h-screen">
+
+    <nav class="bg-white shadow-sm p-4 sticky top-0 z-40">
+        <div class="container mx-auto max-w-6xl flex items-center justify-between">
+            <a href="index.html" class="flex items-center text-green-700 hover:text-green-800 font-bold transition-colors">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Kembali ke Beranda
+            </a>
+            <span class="font-semibold text-gray-500 hidden sm:block">Inovasi KKN Desa Lainungan</span>
+        </div>
+    </nav>
+
+    <header class="bg-green-700 text-white text-center py-10 px-4 shadow-md">
+        <div class="container mx-auto max-w-6xl">
+            <h1 id="judul-kategori" class="text-3xl md:text-4xl font-bold mb-2">Semua Produk</h1>
+            <p id="deskripsi-kategori" class="text-green-100">Menampilkan daftar produk olahan warga desa.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl relative">
+        
+        <div id="status-loading" class="text-center py-10 text-gray-500 text-lg animate-pulse">
+            Memuat data katalog...
+        </div>
+        
+        <div id="wadah-katalog" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+            </div>
+
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 text-center py-6 mt-12">
+        <p>&copy; 2026 Lapak Desa Lainungan, Kabupaten Sidenreng Rappang.</p>
+    </footer>
+
+    <div id="modal-detail" onclick="tutupPopup()" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        
+        <div onclick="event.stopPropagation()" class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-300 overflow-hidden">
+            
+            <div class="flex justify-between items-center p-4 border-b bg-gray-50">
+                <h3 class="text-lg font-bold text-gray-800">Detail Produk</h3>
+                <button onclick="tutupPopup()" class="text-gray-500 hover:text-red-500 bg-gray-200 hover:bg-red-100 rounded-full p-2 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto p-5 flex-grow">
+                <div class="w-full bg-gray-100 rounded-lg flex items-center justify-center mb-6 p-2 h-64 md:h-80 border">
+                    <img id="modal-foto" src="" alt="Foto Produk" class="max-w-full max-h-full object-contain rounded">
+                </div>
+                
+                <div>
+                    <span id="modal-pemilik" class="text-xs font-bold text-green-600 uppercase tracking-wider bg-green-100 px-2 py-1 rounded">Lapak</span>
+                    <h2 id="modal-nama" class="text-2xl font-bold text-gray-900 mt-2 mb-1">Nama Produk</h2>
+                    <p id="modal-kategori" class="text-sm text-gray-500 mb-4">Kategori</p>
+                    
+                    <div class="mb-5">
+                        <span id="modal-harga" class="text-3xl font-bold text-green-700">Rp 0</span>
+                    </div>
+
+                    <div class="border-t pt-4">
+                        <h4 class="font-bold text-gray-800 mb-2">Deskripsi Lengkap:</h4>
+                        <p id="modal-deskripsi" class="text-gray-700 leading-relaxed whitespace-pre-wrap">Deskripsi</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t bg-gray-50 flex justify-end space-x-3">
+                <button onclick="tutupPopup()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded transition-colors">
+                    Kembali
+                </button>
+                <button id="btn-modal-wa" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded transition-colors flex items-center">
+                    Beli via WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
