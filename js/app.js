@@ -39,8 +39,14 @@ Papa.parse(urlCSV, {
                     const kategoriMentah = produk["Kategori Produk"];
                     if (!kategoriMentah) return false;
 
-                    const daftarKategori = kategoriMentah.split(',').map(item => item.trim());
-                    return daftarKategori.includes(kategoriAktif.trim());
+                    // PERBAIKAN LOGIKA FILTERING
+                    // 1. Ubah teks dari database menjadi huruf kecil semua
+                    const teksKategoriDB = kategoriMentah.toLowerCase();
+                    // 2. Ubah kata kunci dari URL menjadi huruf kecil
+                    const teksPencarian = kategoriAktif.trim().toLowerCase();
+
+                    // 3. Cek apakah teks di database "mengandung" kata kunci
+                    return teksKategoriDB.includes(teksPencarian);
                 });
             } else {
                 dataKatalogGlobal = dataMentah;
