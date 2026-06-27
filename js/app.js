@@ -178,7 +178,6 @@ function prosesBeli(nomorWA, namaToko) {
 
 
 // --- KONFIGURASI URL APPSHEET & CSV TOKO ---
-const URL_CSV_TOKO = "https://forms.gle/4skJQ5tUz2geMgY8A"; 
 const URL_APPSHEET = "https://www.appsheet.com/start/8dcd40af-1089-4094-8890-7e286c51921a";       
 
 // --- FUNGSI SLIDER (SIDEBAR MENU) ---
@@ -230,7 +229,7 @@ function validasiDanBukaAppSheet() {
     btnValidasi.innerText = "Mengecek...";
     btnValidasi.disabled = true;
 
-    Papa.parse(URL_CSV_TOKO, {
+    Papa.parse(urlCSV, {
         download: true,
         header: true,
         complete: function(results) {
