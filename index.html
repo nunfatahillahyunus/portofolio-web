@@ -1,19 +1,40 @@
 <!DOCTYPE html>
 <html lang="id">
-    <link rel="stylesheet" href="css/style.css">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beranda - Lapak Desa Lainungan</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 flex flex-col min-h-screen">
+
+    <button onclick="toggleSidebar()" class="fixed top-4 left-4 z-50 bg-green-800 bg-opacity-50 hover:bg-green-700 text-white p-2 rounded-md shadow-lg transition-colors backdrop-blur-sm">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="sidebarMenu" class="fixed inset-y-0 left-0 transform -translate-x-full w-64 bg-white shadow-2xl z-50 transition-transform duration-300 ease-in-out flex flex-col">
+        <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-gray-500 hover:text-red-500">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <div class="p-6 pt-16 flex-grow">
+            <h2 class="text-xl font-bold text-green-700 mb-6 border-b pb-2">Menu Utama</h2>
+            <a href="index.html" class="block py-3 text-gray-800 hover:text-green-600 font-semibold transition-colors">🏠 Beranda Katalog</a>
+            <a href="LINK_GOOGLE_FORM_ANDA" target="_blank" class="block py-3 text-gray-800 hover:text-green-600 font-semibold transition-colors">📝 Daftar Toko Baru</a>
+            <button onclick="bukaModalKodeUnik()" class="w-full text-left py-3 text-gray-800 hover:text-green-600 font-semibold transition-colors">⚙️ Dasbor Penjual (Input)</button>
+        </div>
+    </div>
 
     <header id="header-utama" class="bg-green-700 text-white text-center h-screen flex flex-col items-center justify-center px-4 shadow-md relative overflow-hidden transition-all duration-500">
         <div class="relative z-10 max-w-3xl mx-auto">
             <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Lapak Desa Lainungan</h1>
             <p class="text-lg md:text-xl font-light mb-8">Platform digital pemberdayaan ekonomi warga. Temukan berbagai etalase produk olahan otentik dan hasil bumi langsung dari masyarakat desa.</p>
-            
             <button id="tombol-mulai" onclick="masukHalamanUtama()" class="bg-white text-green-700 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-green-50 transition-colors duration-300 cursor-pointer">
                 Mulai Belanja
             </button>
@@ -25,34 +46,27 @@
             <h2 class="text-3xl font-bold text-gray-800 mb-2">Jelajahi Lapak & Toko Warga</h2>
             <div class="w-24 h-1 bg-green-600 mx-auto rounded"></div>
         </div>
-
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
-            
             <a href="katalog.html?jenis=Olahan Makanan" class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col items-center p-8 text-center hover:-translate-y-1">
                 <div class="w-20 h-20 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🍲</div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Olahan Makanan</h3>
             </a>
-
             <a href="katalog.html?jenis=Olahan Minuman" class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col items-center p-8 text-center hover:-translate-y-1">
                 <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🍹</div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Olahan Minuman</h3>
             </a>
-
             <a href="katalog.html?jenis=Kerajinan" class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col items-center p-8 text-center hover:-translate-y-1">
                 <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🧺</div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Kerajinan</h3>
             </a>
-
             <a href="katalog.html?jenis=Hasil Pertanian & Perkebunan" class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col items-center p-8 text-center hover:-translate-y-1">
                 <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🌾</div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Pertanian & Perkebunan</h3>
             </a>
-
             <a href="katalog.html?jenis=Bibit & Sarana Tani" class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col items-center p-8 text-center hover:-translate-y-1">
                 <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🌱</div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Bibit & Sarana Tani</h3>
             </a>
-
         </div>
     </main>
 
@@ -63,36 +77,41 @@
         </div>
     </footer>
 
+    <div id="modalKodeUnik" class="fixed inset-0 bg-black bg-opacity-60 z-[60] hidden flex items-center justify-center transition-opacity duration-300 opacity-0">
+        <div class="bg-white p-6 rounded-xl shadow-2xl w-11/12 max-w-sm transform scale-95 transition-transform duration-300">
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Akses Penjual</h3>
+            <p class="text-sm text-gray-600 mb-4">Silakan masukkan Kode Unik Toko Anda untuk mengelola produk.</p>
+            <input type="text" id="inputKodeUnik" class="border border-gray-300 p-3 w-full mb-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 font-mono text-center uppercase" placeholder="Contoh: LN01">
+            <p id="pesanErrorKode" class="text-red-500 text-xs font-semibold hidden mb-4 text-center"></p>
+            <div class="flex justify-end gap-3 mt-4">
+                <button onclick="tutupModalKodeUnik()" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">Batal</button>
+                <button id="btnValidasi" onclick="validasiDanBukaAppSheet()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-bold transition-colors">Validasi & Masuk</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 1. SCRIPT INI BERJALAN OTOMATIS SAAT HALAMAN DIBUKA
         document.addEventListener("DOMContentLoaded", () => {
-            // Mengecek apakah browser punya ingatan bahwa tombol sudah ditekan
             if (sessionStorage.getItem("sudahMasuk") === "true") {
                 const header = document.getElementById("header-utama");
                 const konten = document.getElementById("konten-kategori");
                 const footer = document.getElementById("footer-utama");
                 const tombol = document.getElementById("tombol-mulai");
 
-                // Matikan animasi transisi agar saat kembali ke beranda layarnya tidak berkedip
                 header.classList.remove("transition-all", "duration-500");
                 konten.classList.remove("transition-opacity", "duration-700");
 
-                // Langsung terapkan layout posisi mengecil (sudah masuk)
                 header.classList.remove("h-screen", "flex", "flex-col", "items-center", "justify-center");
                 header.classList.add("py-20");
                 
-                // Munculkan konten tanpa disembunyikan
                 konten.classList.remove("hidden", "opacity-0");
                 footer.classList.remove("hidden");
                 
-                // Hilangkan tombol karena sudah di dalam menu
                 if(tombol) tombol.classList.add("hidden");
             }
         });
 
-        // 2. SCRIPT INI BERJALAN HANYA SAAT TOMBOL DITEKAN
         function masukHalamanUtama() {
-            // Beri tahu browser untuk mengingat bahwa pengunjung sudah masuk!
             sessionStorage.setItem("sudahMasuk", "true");
 
             const header = document.getElementById("header-utama");
@@ -100,14 +119,11 @@
             const footer = document.getElementById("footer-utama");
             const tombol = document.getElementById("tombol-mulai");
 
-            // Kecilkan header dengan animasi
             header.classList.remove("h-screen", "flex", "flex-col", "items-center", "justify-center");
             header.classList.add("py-20");
 
-            // Hilangkan tombol seketika saat header mengecil
             if(tombol) tombol.classList.add("hidden");
 
-            // Munculkan konten kategori
             konten.classList.remove("hidden");
             footer.classList.remove("hidden");
 
