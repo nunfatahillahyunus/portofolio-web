@@ -13,7 +13,7 @@
             <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Lapak Desa Lainungan</h1>
             <p class="text-lg md:text-xl font-light mb-8">Platform digital pemberdayaan ekonomi warga. Temukan berbagai etalase produk olahan otentik dan hasil bumi langsung dari masyarakat desa.</p>
             
-            <button onclick="masukHalamanUtama()" class="bg-white text-green-700 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-green-50 transition-colors duration-300 cursor-pointer">
+            <button id="tombol-mulai" onclick="masukHalamanUtama()" class="bg-white text-green-700 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-green-50 transition-colors duration-300 cursor-pointer">
                 Mulai Belanja
             </button>
         </div>
@@ -63,21 +63,53 @@
     </footer>
 
     <script>
+        // 1. SCRIPT INI BERJALAN OTOMATIS SAAT HALAMAN DIBUKA
+        document.addEventListener("DOMContentLoaded", () => {
+            // Mengecek apakah browser punya ingatan bahwa tombol sudah ditekan
+            if (sessionStorage.getItem("sudahMasuk") === "true") {
+                const header = document.getElementById("header-utama");
+                const konten = document.getElementById("konten-kategori");
+                const footer = document.getElementById("footer-utama");
+                const tombol = document.getElementById("tombol-mulai");
+
+                // Matikan animasi transisi agar saat kembali ke beranda layarnya tidak berkedip
+                header.classList.remove("transition-all", "duration-500");
+                konten.classList.remove("transition-opacity", "duration-700");
+
+                // Langsung terapkan layout posisi mengecil (sudah masuk)
+                header.classList.remove("h-screen", "flex", "flex-col", "items-center", "justify-center");
+                header.classList.add("py-20");
+                
+                // Munculkan konten tanpa disembunyikan
+                konten.classList.remove("hidden", "opacity-0");
+                footer.classList.remove("hidden");
+                
+                // Hilangkan tombol karena sudah di dalam menu
+                if(tombol) tombol.classList.add("hidden");
+            }
+        });
+
+        // 2. SCRIPT INI BERJALAN HANYA SAAT TOMBOL DITEKAN
         function masukHalamanUtama() {
-            // Mengambil elemen HTML
+            // Beri tahu browser untuk mengingat bahwa pengunjung sudah masuk!
+            sessionStorage.setItem("sudahMasuk", "true");
+
             const header = document.getElementById("header-utama");
             const konten = document.getElementById("konten-kategori");
             const footer = document.getElementById("footer-utama");
+            const tombol = document.getElementById("tombol-mulai");
 
-            // 1. Kembalikan ukuran Header ke layout awal (menghapus format full-screen)
+            // Kecilkan header dengan animasi
             header.classList.remove("h-screen", "flex", "flex-col", "items-center", "justify-center");
             header.classList.add("py-20");
 
-            // 2. Munculkan bagian Kategori dan Footer
+            // Hilangkan tombol seketika saat header mengecil
+            if(tombol) tombol.classList.add("hidden");
+
+            // Munculkan konten kategori
             konten.classList.remove("hidden");
             footer.classList.remove("hidden");
 
-            // 3. Beri sedikit jeda waktu agar munculnya kategori menggunakan efek transisi memudar (fade-in) yang halus
             setTimeout(() => {
                 konten.classList.remove("opacity-0");
             }, 100);
