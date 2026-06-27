@@ -76,20 +76,17 @@ function renderKatalog(data) {
         const deskripsiSingkat = produk["Deskripsi Singkat Toko"];
         const fotoAsli = produk["Perwakilan Foto Produk / Etalase"];
         
-        // PERBAIKAN: Menggunakan huruf 'p' kecil pada kata produk
         let hargaMentah = produk["Harga Terendah produk (Rp)"];
         let harga = hargaMentah ? parseFloat(hargaMentah).toLocaleString('id-ID') : "0";
         
         const fotoSiapRender = formatGambarDrive(fotoAsli);
 
+        // BAGIAN YANG DIPERBAIKI: Bersih dari duplikasi dan sudah terpasang class untuk CSS
         elemenHTML += `
-            <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-                <img src="${fotoSiapRender}" alt="${namaToko}" class="w-full h-48 object-cover">
-
-                <div class="kartu-toko bg-white rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+            <div class="kartu-toko bg-white rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-xl transition-shadow duration-300 border border-gray-100">
                 <img src="${fotoSiapRender}" alt="${namaToko}" class="gambar-etalase w-full h-48 object-cover">
                 
-                <div class="p-5 flex-grow flex flex-col">
+                <div class="p-5 flex-grow flex flex-col bg-white relative z-10">
                     <span class="text-xs font-semibold text-green-600 uppercase tracking-wider mb-1">LAPAK / TOKO</span>
                     <h3 class="text-2xl font-bold text-gray-900 mb-2">${namaToko}</h3>
                     <p class="text-xs text-gray-500 mb-3 leading-relaxed">${kategori || ''}</p>
@@ -122,7 +119,6 @@ function bukaPopup(index) {
     document.getElementById('modal-deskripsi').innerText = produk["Deskripsi Singkat Toko"];
     document.getElementById('modal-list-barang').innerText = produk["List Barang yang Terjual"] || "Tidak ada daftar barang detail.";
     
-    // PERBAIKAN: Menggunakan huruf 'p' kecil pada kata produk
     let hargaMentah = produk["Harga Terendah produk (Rp)"];
     document.getElementById('modal-harga').innerText = "Rp " + (hargaMentah ? parseFloat(hargaMentah).toLocaleString('id-ID') : "0");
     
