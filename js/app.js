@@ -165,3 +165,98 @@ function prosesBeli(nomorWA, namaToko) {
     
     window.open(urlWA, "_blank");
 }
+
+
+
+
+
+
+
+
+
+
+
+
+// --- KONFIGURASI URL APPSHEET & CSV TOKO ---
+const URL_CSV_TOKO = "https://forms.gle/4skJQ5tUz2geMgY8A"; 
+const URL_APPSHEET = "https://www.appsheet.com/start/8dcd40af-1089-4094-8890-7e286c51921a";       
+
+// --- FUNGSI SLIDER (SIDEBAR MENU) ---
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebarMenu');
+    if (sidebar.classList.contains('-translate-x-full')) {
+        sidebar.classList.remove('-translate-x-full');
+    } else {
+        sidebar.classList.add('-translate-x-full');
+    }
+}
+
+// --- FUNGSI POPUP (MODAL) ---
+function bukaModalKodeUnik() {
+    document.getElementById('sidebarMenu').classList.add('-translate-x-full'); 
+    
+    const modal = document.getElementById('modalKodeUnik');
+    document.getElementById('inputKodeUnik').value = "";
+    document.getElementById('pesanErrorKode').classList.add('hidden');
+    
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modal.children[0].classList.remove('scale-95');
+    }, 10);
+}
+
+function tutupModalKodeUnik() {
+    const modal = document.getElementById('modalKodeUnik');
+    modal.classList.add('opacity-0');
+    modal.children[0].classList.add('scale-95');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+// --- FUNGSI VALIDASI ---
+function validasiDanBukaAppSheet() {
+    const inputKode = document.getElementById('inputKodeUnik').value.trim();
+    const pesanError = document.getElementById('pesanErrorKode');
+    const btnValidasi = document.getElementById('btnValidasi');
+
+    if (!inputKode) {
+        pesanError.innerText = "Kode unik tidak boleh kosong!";
+        pesanError.classList.remove('hidden');
+        return;
+    }
+
+    btnValidasi.innerText = "Mengecek...";
+    btnValidasi.disabled = true;
+
+    Papa.parse(URL_CSV_TOKO, {
+        download: true,
+        header: true,
+        complete: function(results) {
+            const dataToko = results.data;
+            const isValid = dataToko.some(toko => {
+                const kodeDiDatabase = toko["Kode Unik Toko"];
+                return kodeDiDatabase && (kodeDiDatabase.trim().toLowerCase() === inputKode.toLowerCase());
+            });
+
+            if (isValid) {
+                pesanError.classList.add('hidden');
+                const urlTujuan = `${URL_APPSHEET}&defaults=%7B%22Kode%20Unik%22%3A%22${inputKode.toUpperCase()}%22%7D`;
+                window.open(urlTujuan, "_blank");
+                tutupModalKodeUnik();
+            } else {
+                pesanError.innerText = "Maaf, Kode Unik Anda tidak terdaftar!";
+                pesanError.classList.remove('hidden');
+            }
+            btnValidasi.innerText = "Validasi & Masuk";
+            btnValidasi.disabled = false;
+        },
+        error: function(error) {
+            pesanError.innerText = "Terjadi kesalahan membaca data: " + error.message;
+            pesanError.classList.remove('hidden');
+            btnValidasi.innerText = "Validasi & Masuk";
+            btnValidasi.disabled = false;
+        }
+    });
+}
