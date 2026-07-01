@@ -65,13 +65,56 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            // 1. INISIALISASI KAMERA PETA (Terpusat di Desa Talumae)
+            // 1. INISIALISASI KAMERA PETA
             const map = L.map('map').setView([-3.919263, 119.901488], 15);
 
             // 2. AMBIL DESAIN PETA (Base Map) DARI OPENSTREETMAP
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
             }).addTo(map);
+
+            // =========================================================
+            // [TAMBAHAN BARU] 2.5 POLIGON BATAS DESA TALUMAE
+            // =========================================================
+            const titikBatasTalumae = [
+                [-3.886944, 119.874877],
+                [-3.887166, 119.875122],
+                [-3.888588, 119.878560],
+                [-3.896378, 119.882901],
+                [-3.902527, 119.902415],
+                [-3.902608, 119.905448],
+                [-3.906962, 119.905110],
+                [-3.918118, 119.906554],
+                [-3.921754, 119.909830],
+                [-3.922112, 119.895520],
+                [-3.925789074030578, 119.89004460639772],
+                [-3.926416227633773, 119.88071345242768],
+                [-3.926350173953535, 119.88014766094304],
+                [-3.9262004706233022, 119.87970958525055],
+                [-3.9259726865599394, 119.87799095906423],
+                [-3.9213092519802673, 119.8781483119254],
+                [-3.920838043204099, 119.87785902180482],
+                [-3.9208654796554527, 119.87794626577981],
+                [-3.9196772333178385, 119.87773433093925],
+                [-3.918119017462762, 119.87715778495637],
+                [-3.9151757763830695, 119.87584514004367],
+                [-3.912362283782905, 119.87508853014135],
+                [-3.9086162310653734, 119.87445429697979],
+                [-3.9044404967132404, 119.8743122103524],
+                [-3.8966244516041177, 119.87490767869076]
+            ];
+
+            const poligonDesa = L.polygon(titikBatasTalumae, {
+                color: '#dc2626',       
+                weight: 3,              
+                dashArray: '6, 6',      
+                fillColor: '#ef4444',   
+                fillOpacity: 0.08       
+            }).addTo(map).bindPopup("<b>Batas Administratif</b><br>Desa Talumae");
+
+            // Memaksa kamera pas ke ukuran poligon desa
+            map.fitBounds(poligonDesa.getBounds());
+            // =========================================================
 
             // 3. TARIK DATA DARI DATABASE GOOGLE SHEETS
             Papa.parse(URL_CSV_TOKO, {
@@ -87,12 +130,10 @@
                         
                         // Cek apakah kolom lokasi diisi dan menggunakan koma pembatas
                         if (lokasi && lokasi.includes(',')) {
-                            // Pecah teks koordinat menjadi Latitude dan Longitude
                             const kordinat = lokasi.split(',');
                             const lat = parseFloat(kordinat[0].trim());
                             const lng = parseFloat(kordinat[1].trim());
 
-                            // Pastikan hasilnya adalah angka nyata (bukan teks error)
                             if (!isNaN(lat) && !isNaN(lng)) {
                                 jumlahPin++;
                                 
@@ -100,7 +141,7 @@
                                 const kategori = toko["Kategori Produk"] || "Bermacam Kategori";
                                 const foto = formatGambarDrive(toko["Perwakilan Foto Produk / Etalase"]);
                                 
-                                // 4. DESAIN KARTU POPUP (HTML BUNGKUSAN PIN)
+                                // 4. DESAIN KARTU POPUP
                                 const popupContent = `
                                     <div class="flex flex-col bg-white">
                                         <div class="relative h-32 w-full">
@@ -130,10 +171,8 @@
                     const mapDiv = document.getElementById("map");
                     mapDiv.classList.remove("hidden");
                     
-                    // Paksa Peta menyesuaikan ukuran kotaknya dengan layar (Anti-ngebug)
                     setTimeout(() => { map.invalidateSize(); }, 200);
 
-                    // Peringatan jika belum ada warga yang input koordinat
                     if (jumlahPin === 0) {
                         document.getElementById("status-loading").classList.remove("hidden");
                         document.getElementById("status-loading").innerHTML = "Data berhasil ditarik, tetapi belum ada titik koordinat yang dimasukkan penjual.";
