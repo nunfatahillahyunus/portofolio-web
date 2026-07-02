@@ -13,11 +13,19 @@
     </style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 flex flex-col min-h-screen">
-
-    <button onclick="toggleSidebar()" class="fixed top-4 left-4 z-[100] bg-green-800 bg-opacity-90 hover:bg-green-700 text-white p-2 rounded-md shadow-lg transition-colors backdrop-blur-sm">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-    </button>
-
+    <!-- NAVIGASI ATAS STATIS -->
+    <nav class="bg-white shadow-sm p-4 relative z-[60]">
+        <div class="container mx-auto max-w-6xl flex items-center">
+            <button onclick="toggleSidebar()" class="mr-4 bg-transparent text-green-700 hover:text-green-800 transition-colors focus:outline-none">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            <a href="index.html" class="flex items-center text-green-700 hover:text-green-800 font-bold transition-colors">
+                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Kembali ke Beranda
+            </a>
+            <span class="font-semibold text-gray-500 hidden sm:block ml-auto">Inovasi KKN Desa Talumae</span>
+        </div>
+    </nav>
     <div id="sidebarMenu" class="fixed inset-y-0 left-0 transform -translate-x-full w-64 bg-white shadow-2xl z-[105] transition-transform duration-300 ease-in-out flex flex-col">
         <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-gray-500 hover:text-red-500">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -32,7 +40,6 @@
             <button onclick="bukaModalKodeUnik()" class="w-full text-left py-3 text-gray-800 hover:text-green-600 font-semibold transition-colors">⚙️ Dasbor Penjual</button>
         </div>
     </div>
-
     <div id="modalKodeUnik" class="fixed inset-0 bg-black bg-opacity-60 z-[110] hidden flex items-center justify-center transition-opacity duration-300 opacity-0">
         <div class="bg-white p-6 rounded-xl shadow-2xl w-11/12 max-w-sm transform scale-95 transition-transform duration-300">
             <h3 class="text-xl font-bold text-gray-900 mb-2">Akses Penjual</h3>
@@ -45,32 +52,19 @@
             </div>
         </div>
     </div>
-    <nav class="bg-white shadow-sm p-4 pl-16 sticky top-0 z-[60]">
-        <div class="container mx-auto max-w-6xl flex items-center justify-between">
-            <a href="index.html" class="flex items-center text-green-700 hover:text-green-800 font-bold transition-colors">
-                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Beranda
-            </a>
-            <span class="font-semibold text-gray-500 hidden sm:block">Inovasi KKN Desa Talumae</span>
-        </div>
-    </nav>
-
+    
     <header class="bg-green-700 text-white text-center py-8 px-4 shadow-md">
         <div class="container mx-auto max-w-6xl">
             <h1 class="text-3xl md:text-4xl font-bold mb-2">Pusat Data UMKM</h1>
             <p class="text-green-100">Statistik desa dan pencarian lapak warga secara spesifik.</p>
         </div>
     </header>
-
     <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
-        
         <div class="mb-8">
             <h2 class="text-xl font-bold text-gray-800 mb-4 border-l-4 border-green-600 pl-3">Statistik Lapak Warga</h2>
-            
             <div id="loading-stats" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center text-gray-500 flex items-center justify-center gap-3">
                 <div class="loader"></div> Menghitung data dari satelit...
             </div>
-
             <div id="wadah-stats" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 hidden">
                 <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-gray-800 text-center hover:-translate-y-1 transition-transform">
                     <p class="text-xs text-gray-500 font-semibold uppercase mb-1">Total UMKM</p>
@@ -98,19 +92,16 @@
                 </div>
             </div>
         </div>
-
         <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 mb-8">
             <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
                 <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 Pencarian Spesifik
             </h2>
-            
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="flex flex-col">
                     <label class="text-xs font-semibold text-gray-600 mb-1">Nama Lapak / Toko</label>
                     <input type="text" id="filter-nama" placeholder="Cari nama..." class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none">
                 </div>
-                
                 <div class="flex flex-col">
                     <label class="text-xs font-semibold text-gray-600 mb-1">Kategori Produk</label>
                     <select id="filter-kategori" class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none">
@@ -122,54 +113,40 @@
                         <option value="Bibit">Bibit & Sarana Tani</option>
                     </select>
                 </div>
-
                 <div class="flex flex-col">
                     <label class="text-xs font-semibold text-gray-600 mb-1">Harga Minimum (Rp)</label>
                     <input type="number" id="filter-min" placeholder="Rp 0" class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none">
                 </div>
-
                 <div class="flex flex-col">
                     <label class="text-xs font-semibold text-gray-600 mb-1">Harga Maksimum (Rp)</label>
                     <input type="number" id="filter-max" placeholder="Tanpa Batas" class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none">
                 </div>
             </div>
-
             <div class="mt-5 flex justify-end">
                 <button id="btn-terapkan" onclick="jalankanPencarian()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-8 rounded-lg shadow-md transition-colors w-full md:w-auto flex items-center justify-center gap-2 cursor-not-allowed opacity-50" disabled>
                     Terapkan Filter
                 </button>
             </div>
         </div>
-
         <div id="status-awal" class="text-center py-16 bg-gray-100 rounded-xl border-2 border-dashed border-gray-300">
             <div class="text-5xl mb-4 opacity-50">🔍</div>
             <h3 class="text-xl font-bold text-gray-600">Menunggu Pencarian...</h3>
             <p class="text-gray-500 mt-2">Silakan atur filter di atas lalu klik "Terapkan Filter" untuk menampilkan daftar UMKM.</p>
         </div>
-
-        <div id="wadah-hasil-pencarian" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
-            </div>
-
+        <div id="wadah-hasil-pencarian" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
         <div id="status-kosong" class="hidden text-center py-16 bg-red-50 rounded-xl border border-red-200">
             <h3 class="text-xl font-bold text-red-600 mb-2">Toko Tidak Ditemukan</h3>
             <p class="text-red-500">Tidak ada lapak atau toko yang sesuai dengan kriteria filter Anda.</p>
         </div>
-
     </main>
-
     <footer class="bg-gray-900 text-gray-400 text-center py-6 mt-auto">
         <p>&copy; 2026 Lapak Desa Talumae, Kabupaten Sidenreng Rappang.</p>
     </footer>
-
-    <script src="js/sidebar.js"></script>
-    
     <script>
         const urlCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSr_Sh6mxIZFs_BdXP7zXCuEiU_FiuVcjrchMm5X8cPq8HXn2DZ2X2OQA_ObHxdVLer3dWwGdi5WVmq/pub?gid=1489445987&single=true&output=csv";
         const urlCSVProduk = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSr_Sh6mxIZFs_BdXP7zXCuEiU_FiuVcjrchMm5X8cPq8HXn2DZ2X2OQA_ObHxdVLer3dWwGdi5WVmq/pub?gid=263400492&single=true&output=csv";
-
         let dbToko = [];
         let dbProduk = [];
-
         document.addEventListener("DOMContentLoaded", () => {
             Papa.parse(urlCSV, {
                 download: true,
@@ -181,7 +158,6 @@
                         complete: function(resProduk) {
                             dbToko = resToko.data.filter(t => t["Nama Toko"]); 
                             dbProduk = resProduk.data;
-
                             hitungDanTampilkanStatistik();
                             
                             const btnCari = document.getElementById("btn-terapkan");
@@ -193,11 +169,9 @@
                 }
             });
         });
-
         function hitungDanTampilkanStatistik() {
             let totalToko = dbToko.length;
             let countMakanan = 0, countMinuman = 0, countKerajinan = 0, countPertanian = 0, countBibit = 0;
-
             dbToko.forEach(toko => {
                 const kat = (toko["Kategori Produk"] || "").toLowerCase();
                 if (kat.includes("makanan")) countMakanan++;
@@ -206,18 +180,15 @@
                 if (kat.includes("pertanian") || kat.includes("perkebunan")) countPertanian++;
                 if (kat.includes("bibit") || kat.includes("sarana")) countBibit++;
             });
-
             document.getElementById("stat-total").innerText = totalToko;
             document.getElementById("stat-makanan").innerText = countMakanan;
             document.getElementById("stat-minuman").innerText = countMinuman;
             document.getElementById("stat-kerajinan").innerText = countKerajinan;
             document.getElementById("stat-pertanian").innerText = countPertanian;
             document.getElementById("stat-bibit").innerText = countBibit;
-
             document.getElementById("loading-stats").classList.add("hidden");
             document.getElementById("wadah-stats").classList.remove("hidden");
         }
-
         function jalankanPencarian() {
             document.getElementById("status-awal").classList.add("hidden");
             const wadahHasil = document.getElementById("wadah-hasil-pencarian");
@@ -227,7 +198,6 @@
             const dropdownKategori = document.getElementById("filter-kategori");
             const keywordKategori = dropdownKategori.value.toLowerCase();
             
-            // Mengambil TEKS dari pilihan dropdown (contoh: "Olahan Makanan") untuk ditaruh di URL
             let teksKategoriSpesifik = "";
             if (dropdownKategori.value !== "") {
                 teksKategoriSpesifik = dropdownKategori.options[dropdownKategori.selectedIndex].text;
@@ -238,14 +208,11 @@
             
             const hargaMin = isNaN(valMin) ? 0 : valMin;
             const hargaMax = isNaN(valMax) ? Infinity : valMax;
-
             const hasilFilter = dbToko.filter(toko => {
                 const namaToko = (toko["Nama Toko"] || "").toLowerCase();
                 if (keywordNama && !namaToko.includes(keywordNama)) return false;
-
                 const katToko = (toko["Kategori Produk"] || "").toLowerCase();
                 if (keywordKategori && !katToko.includes(keywordKategori)) return false;
-
                 const idToko = toko["Kode Unik Toko"];
                 const produkTokoIni = dbProduk.filter(p => p["Kode Unik Toko"] === idToko);
                 
@@ -261,7 +228,6 @@
                 }
                 return true; 
             });
-
             if (hasilFilter.length === 0) {
                 wadahHasil.classList.add("hidden");
                 statusKosong.classList.remove("hidden");
@@ -274,15 +240,10 @@
                     const namaToko = toko["Nama Toko"];
                     const kategori = toko["Kategori Produk"];
                     const idToko = toko["Kode Unik Toko"] || namaToko;
-
-                    // === LOGIKA URL MENGARAH KE KATEGORI SPESIFIK ===
                     let urlTujuan = `katalog.html?toko=${encodeURIComponent(idToko)}`;
                     if (teksKategoriSpesifik !== "") {
-                        // Jika dropdown tidak "Semua Kategori", tambahkan parameter jenis
                         urlTujuan += `&jenis=${encodeURIComponent(teksKategoriSpesifik)}`;
                     }
-
-                    // Tampilan Kartu Tanpa Gambar
                     elemenHTML += `
                         <a href="${urlTujuan}" class="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-green-500 flex flex-col p-6 hover:-translate-y-1">
                             <div class="flex items-start justify-between mb-3">
@@ -301,5 +262,6 @@
             }
         }
     </script>
+    <script src="js/app.js"></script>
 </body>
 </html>
