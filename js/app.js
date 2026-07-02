@@ -68,14 +68,21 @@ Papa.parse(urlCSV, {
 
                     // --- FITUR AUTO-OPEN POPUP DARI PETA ---
                     if (tokoBukaOtomatis) {
-                        const indexToko = dataKatalogGlobal.findIndex(t => 
-                            t["Kode Unik Toko"] === tokoBukaOtomatis || t["Nama Toko"] === tokoBukaOtomatis
-                        );
+                        // Ubah teks yang dicari menjadi huruf kecil semua dan hapus spasi berlebih
+                        const targetToko = tokoBukaOtomatis.trim().toLowerCase(); 
+                        
+                        const indexToko = dataKatalogGlobal.findIndex(t => {
+                            const kode = (t["Kode Unik Toko"] || "").trim().toLowerCase();
+                            const nama = (t["Nama Toko"] || "").trim().toLowerCase();
+                            return kode === targetToko || nama === targetToko;
+                        });
                         
                         if (indexToko !== -1) {
                             setTimeout(() => {
                                 bukaPopup(indexToko);
-                            }, 400); // Jeda transisi UI
+                            }, 500); // Jeda transisi dinaikkan sedikit agar aman saat dirender di HP
+                        } else {
+                            console.warn("Gagal membuka popup otomatis untuk:", tokoBukaOtomatis);
                         }
                     }
                     // ----------------------------------------
