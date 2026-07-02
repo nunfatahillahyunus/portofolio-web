@@ -14,9 +14,23 @@
 </head>
 <body class="bg-gray-50 font-sans text-gray-800 flex flex-col min-h-screen">
 
-    <button onclick="toggleSidebar()" class="fixed top-4 left-4 z-[100] bg-green-800 bg-opacity-90 hover:bg-green-700 text-white p-2 rounded-md shadow-lg transition-colors backdrop-blur-sm">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-    </button>
+    <!-- NAVIGASI ATAS STATIS -->
+    <nav class="bg-white shadow-sm p-4 relative z-[60]">
+        <div class="container mx-auto max-w-6xl flex items-center">
+            
+            <!-- Tombol Hamburger Transparan -->
+            <button onclick="toggleSidebar()" class="mr-4 bg-transparent text-green-700 hover:text-green-800 transition-colors focus:outline-none">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            
+            <a href="index.html" class="flex items-center text-green-700 hover:text-green-800 font-bold transition-colors">
+                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Kembali ke Beranda
+            </a>
+            
+            <span class="font-semibold text-gray-500 hidden sm:block ml-auto">Inovasi KKN Desa Talumae</span>
+        </div>
+    </nav>
 
     <div id="sidebarMenu" class="fixed inset-y-0 left-0 transform -translate-x-full w-64 bg-white shadow-2xl z-[105] transition-transform duration-300 ease-in-out flex flex-col">
         <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-gray-500 hover:text-red-500">
@@ -300,6 +314,6 @@
                 wadahHasil.innerHTML = elemenHTML;
             }
         }
-    </script>
+    <script src="js/app.js"></script>
 </body>
 </html>
